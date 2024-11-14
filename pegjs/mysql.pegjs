@@ -1418,16 +1418,24 @@ ALTER_DROP_KEY_INDEX
         type: 'alter',
     }
   }
-  / KW_DROP __ k:(('FOREIGN'i? __ KW_KEY) / (KW_INDEX)) __ c:ident {
-    const resource = Array.isArray(k) ? 'key' : 'index'
+  / KW_DROP __ k:(('FOREIGN'i? __ KW_KEY)) __ c:ident {
     return {
         action: 'drop',
-        [resource]: c,
-        keyword: Array.isArray(k) ? `${[k[0], k[2]].filter(v => v).join(' ').toLowerCase()}` : k.toLowerCase(),
-        resource,
+        key: c,
+        keyword: 'key',
+        resource: 'key',
         type: 'alter',
     }
   }
+  / KW_DROP __ KW_INDEX __ c:ident {
+      return {
+          action: 'drop',
+          index: c,
+          keyword: 'index',
+          resource: 'index',
+          type: 'alter',
+      }
+    }
 
 ALTER_DROP_CONSTRAINT
   = KW_DROP __ kc:'CHECK'i __ c:ident_name {
@@ -2411,7 +2419,7 @@ table_ref_list
         expr: tail,
         parentheses: {
           length: rp.length
-        } 
+        }
       }
     }
 
@@ -3678,10 +3686,10 @@ literal_basic
   / literal_bool
   / literal_null
   / literal_datetime
-  
+
 literal
   = literal_basic / literal_numeric
-  
+
 
 literal_list
   = head:literal tail:(__ COMMA __ literal)* {
@@ -3750,7 +3758,7 @@ literal_string
         value: ca[1].join('')
       };
     }
-  
+
 
 literal_datetime
   = type:(KW_TIME / KW_DATE / KW_TIMESTAMP / KW_DATETIME) __ ca:("'" single_char* "'") {

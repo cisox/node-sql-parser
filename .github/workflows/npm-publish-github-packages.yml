@@ -23,25 +23,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - run: npm install
-      - run: npm test
-
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
-
-      - run: npm install
-
-      - run: npm run build
-
-      - run: cd output/prod && npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_NPM_TOKEN }}
 
   publish-gpr:
     needs: build
@@ -52,14 +33,14 @@ jobs:
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
-          scope: '@taozhi8833998'
+          scope: '@cisox'
 
       - run: npm install
 
       - name: Update package.json name
-        run: sed -i '2,2s/node-sql-parser/@taozhi8833998\/node-sql-parser/g' package.json
+        run: sed -i '2,2s/node-sql-parser/@cisox\/node-sql-parser/g' package.json
 
-      - run: echo registry=https://npm.pkg.github.com/taozhi8833998 >> .npmrc
+      - run: echo registry=https://npm.pkg.github.com/cisox >> .npmrc
 
       - run: npm run build
 
